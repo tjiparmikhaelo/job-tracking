@@ -1,12 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
-import { Job } from '@/app/models';
+import { getModels } from '../../../lib/db';
+
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    const { Job } = await getModels();
+
     const body = await request.json();
     const [updatedRowsCount] = await Job.update(body, {
       where: { id: params.id },
@@ -35,6 +38,8 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    const { Job } = await getModels();
+
     const deletedRowsCount = await Job.destroy({
       where: { id: params.id },
     });

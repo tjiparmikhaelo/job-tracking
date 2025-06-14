@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
-import { Job } from '@/app/models';
+import { getModels } from '../../lib/db';
 
 export async function GET() {
   try {
+    const { Job } = await getModels();
+
     const jobs = await Job.findAll({
       order: [['createdAt', 'DESC']],
     });
@@ -19,6 +21,8 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const { Job } = await getModels();
+
     const body = await request.json();
     const job = await Job.create(body);
     return NextResponse.json(job, { status: 201 });

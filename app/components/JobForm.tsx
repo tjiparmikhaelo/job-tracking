@@ -123,11 +123,11 @@ export default function JobForm({ onSubmit, initialData, isLoading }: JobFormPro
             </div>
 
             <div>
-              <Label htmlFor="salary">Salary</Label>
+              <Label htmlFor="salary">Expected Salary</Label>
               <Input
                 id="salary"
                 {...register('salary')}
-                placeholder="e.g., $80,000 - $100,000"
+                placeholder="e.g., Rp30.000.000,00"
               />
             </div>
 

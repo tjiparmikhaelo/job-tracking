@@ -1,148 +1,72 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import pg from 'pg';
-import { Sequelize, DataTypes } from 'sequelize';
-import dotenv from 'dotenv';
+import { Sequelize } from 'sequelize';
+import { getSequelize } from '../lib/database';
 
-// Load environment variables
-dotenv.config({ path: '.env.local' });
-
-// Import models explicitly
+// Import model classes
 import { Job } from './Job';
+// Add other models here as you create them
+// import { User } from './User';
+// import { Company } from './Company';
 
-const env = process.env.NODE_ENV || 'development';
-
-// Database configuration interface
-interface DatabaseConfig {
-  [key: string]: {
-    username?: string;
-    password?: string;
-    database?: string;
-    host?: string;
-    port?: number;
-    dialect: 'mysql' | 'postgres' | 'sqlite' | 'mariadb' | 'mssql';
-    use_env_variable?: string;
-    [key: string]: any;
-  };
-}
-
-// Load config
-const config: DatabaseConfig = require('../config/config.js');
-const envConfig = config[env];
-
-// Initialize Sequelize lazily
-let sequelize: Sequelize;
-
-const getSequelize = (): Sequelize => {
-  if (!sequelize) {
-    if (envConfig.use_env_variable) {
-      const connectionString = process.env[envConfig.use_env_variable];
-      if (!connectionString) {
-        throw new Error(`Environment variable ${envConfig.use_env_variable} is not defined`);
-      }
-      sequelize = new Sequelize(connectionString, envConfig);
-    } else {
-      if (!envConfig.database || !envConfig.username) {
-        throw new Error('Database configuration is incomplete');
-      }
-      
-      sequelize = new Sequelize(
-        envConfig.database,
-        envConfig.username,
-        envConfig.password || '',
-        envConfig
-      );
-    }
-  }
-  return sequelize;
-};
-
-// Database interface for models
-interface Database {
+// Database interface for type safety
+export interface Database {
   sequelize: Sequelize;
-  Sequelize: typeof Sequelize;
   Job: typeof Job;
-  // Add other models here as you create them
+  // Add other models here
   // User: typeof User;
   // Company: typeof Company;
 }
 
 let db: Database | null = null;
 
-// Initialize models
+/**
+ * Initialize all models with Sequelize instance
+ */
 const initializeModels = (): Database => {
-  if (db) return db;
+  const sequelize = getSequelize();
   
-  const sequelizeInstance = getSequelize();
-  
-  // Initialize Job model
-  Job.initModel(sequelizeInstance);
-  
-  // Add other models here as you create them
-  // User.initModel(sequelizeInstance);
-  // Company.initModel(sequelizeInstance);
+  // Initialize all models
+  Job.initModel(sequelize);
+  // Add other model initializations here
+  // User.initModel(sequelize);
+  // Company.initModel(sequelize);
 
-  db = {
-    sequelize: sequelizeInstance,
-    Sequelize,
+  return {
+    sequelize,
     Job,
     // User,
     // Company,
   };
-
-  return db;
 };
 
-// Get database instance
-const getDatabase = (): Database => {
-  if (!db) {
-    db = initializeModels();
-  }
-  return db;
-};
-
-// Set up associations
-const setupAssociations = () => {
-  const database = getDatabase();
+/**
+ * Set up model associations
+ */
+const setupAssociations = (database: Database): void => {
   // Add associations here when you have them
   // Example:
-  // Job.associate?.(database);
-  // User.associate?.(database);
+  // database.Job.associate?.(database);
+  // database.User.associate?.(database);
 };
 
-// Test database connection
-const testConnection = async (): Promise<void> => {
-  try {
-    const sequelizeInstance = getSequelize();
-    await sequelizeInstance.authenticate();
-    console.log('✅ Database connection has been established successfully.');
-    
-    // Sync database in development
-    if (process.env.NODE_ENV === 'development') {
-      await sequelizeInstance.sync({ alter: true });
-      console.log('✅ Database synchronized');
-    }
-  } catch (error) {
-    console.error('❌ Unable to connect to the database:', error);
+/**
+ * Get initialized database with all models
+ */
+export const getDatabase = (): Database => {
+  if (!db) {
+    db = initializeModels();
+    setupAssociations(db);
   }
-};
-
-// Initialize database
-const initializeDatabase = async () => {
-  const database = getDatabase();
-  await testConnection();
-  setupAssociations();
-  return database;
+  return db;
 };
 
 // Export individual models for direct import (recommended)
 export { Job };
-// export const sequelize = getSequelize();
+// export { User };
+// export { Company };
+
+// Export Sequelize for type definitions
 export { Sequelize };
 
-// Export database object for compatibility
-export default getDatabase();
-
-// Export initialization function for manual control
-export { initializeDatabase };
+// Default export for compatibility
+export default getDatabase;
