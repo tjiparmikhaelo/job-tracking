@@ -69,10 +69,12 @@ export class Job extends Model<JobAttributes, JobCreationAttributes> implements 
         applicationDate: {
           type: DataTypes.DATE,
           allowNull: false,
+          field: 'application_date'
         },
         jobUrl: {
           type: DataTypes.TEXT,
           allowNull: true,
+          field: 'job_url'
         },
         notes: {
           type: DataTypes.TEXT,
@@ -89,10 +91,24 @@ export class Job extends Model<JobAttributes, JobCreationAttributes> implements 
         contactEmail: {
           type: DataTypes.STRING,
           allowNull: true,
+          field: 'contact_email'
         },
         followUpDate: {
           type: DataTypes.DATE,
           allowNull: true,
+          field: 'follow_up_date'
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          field: 'created_at'
+        },
+        updatedAt: {
+          type: DataTypes.DATE,
+          field: 'updated_at'
+        },
+        deletedAt: {
+          type: DataTypes.DATE,
+          field: 'deleted_at'
         },
       },
       {

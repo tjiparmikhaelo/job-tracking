@@ -8,7 +8,7 @@ module.exports = {
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
-    dialect: process.env.DB_DIALECT,
+    dialect: 'postgres',
     logging: console.log, // Set to false to disable SQL logging
     pool: {
       max: 5,
@@ -23,7 +23,7 @@ module.exports = {
     database: `${process.env.DB_NAME}_test`,
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
-    dialect: process.env.DB_DIALECT,
+    dialect: 'postgres',
     logging: false
   },
   production: {
@@ -32,7 +32,7 @@ module.exports = {
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
-    dialect: process.env.DB_DIALECT,
+    dialect: 'postgres',
     logging: false,
     pool: {
       max: 20,

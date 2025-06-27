@@ -13,7 +13,7 @@ let sequelize: Sequelize | null = null;
 export const getSequelize = (): Sequelize => {
   if (!sequelize) {
     sequelize = new Sequelize(
-      '',
+      process.env.DATABASE_URL!,
       {
         dialect: 'postgres',
         dialectModule: require('pg'),
@@ -21,6 +21,7 @@ export const getSequelize = (): Sequelize => {
       }
     );
   }
+  
   return sequelize;
 };
 
