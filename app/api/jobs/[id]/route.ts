@@ -5,14 +5,21 @@ import { getModels } from '../../../lib/db';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { Job } = await getModels();
 
+    const { id } = await params;
+
     const body = await request.json();
+    
+    if (!body.followUpDate || body.followUpDate === '' || body.followUpDate === 'Invalid date') {
+      body.followUpDate = null;
+    }
+    
     const [updatedRowsCount] = await Job.update(body, {
-      where: { id: params.id },
+      where: { id },
     });
     
     if (updatedRowsCount === 0) {
@@ -22,7 +29,7 @@ export async function PUT(
       );
     }
     
-    const updatedJob = await Job.findByPk(params.id);
+    const updatedJob = await Job.findByPk(id);
     return NextResponse.json(updatedJob);
   } catch (error: any) {
     console.error('PUT /api/jobs/[id] error:', error);

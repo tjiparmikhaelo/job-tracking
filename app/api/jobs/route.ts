@@ -24,7 +24,13 @@ export async function POST(request: NextRequest) {
     const { Job } = await getModels();
 
     const body = await request.json();
+    
+    if (!body.followUpDate || body.followUpDate === '' || body.followUpDate === 'Invalid date') {
+      body.followUpDate = null;
+    }
+    
     const job = await Job.create(body);
+
     return NextResponse.json(job, { status: 201 });
   } catch (error: any) {
     console.error('POST /api/jobs error:', error);

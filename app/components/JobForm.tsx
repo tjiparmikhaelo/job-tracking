@@ -30,9 +30,10 @@ interface JobFormProps {
   onSubmit: (data: JobFormData) => void;
   initialData?: Partial<JobFormData>;
   isLoading?: boolean;
+  isEditing?: boolean;
 }
 
-export default function JobForm({ onSubmit, initialData, isLoading }: JobFormProps) {
+export default function JobForm({ onSubmit, initialData, isLoading, isEditing = false }: JobFormProps) {
   const {
     register,
     handleSubmit,
@@ -53,13 +54,15 @@ export default function JobForm({ onSubmit, initialData, isLoading }: JobFormPro
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Add New Job Application</CardTitle>
+        <CardTitle>
+          {isEditing ? 'Edit Job Application' : 'Add New Job Application'}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="company">Company *</Label>
+              <Label htmlFor="company" className='mb-2'>Company *</Label>
               <Input
                 id="company"
                 {...register('company')}
@@ -71,7 +74,7 @@ export default function JobForm({ onSubmit, initialData, isLoading }: JobFormPro
             </div>
 
             <div>
-              <Label htmlFor="position">Position *</Label>
+              <Label htmlFor="position" className='mb-2'>Position *</Label>
               <Input
                 id="position"
                 {...register('position')}
@@ -83,7 +86,7 @@ export default function JobForm({ onSubmit, initialData, isLoading }: JobFormPro
             </div>
 
             <div>
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status" className='mb-2'>Status</Label>
               <Select
                 value={status}
                 onValueChange={(value: any) => setValue('status', value as any)}
@@ -102,7 +105,7 @@ export default function JobForm({ onSubmit, initialData, isLoading }: JobFormPro
             </div>
 
             <div>
-              <Label htmlFor="applicationDate">Application Date *</Label>
+              <Label htmlFor="applicationDate" className='mb-2'>Application Date *</Label>
               <Input
                 id="applicationDate"
                 type="date"
@@ -114,7 +117,7 @@ export default function JobForm({ onSubmit, initialData, isLoading }: JobFormPro
             </div>
 
             <div>
-              <Label htmlFor="location">Location</Label>
+              <Label htmlFor="location" className='mb-2'>Location</Label>
               <Input
                 id="location"
                 {...register('location')}
@@ -123,7 +126,7 @@ export default function JobForm({ onSubmit, initialData, isLoading }: JobFormPro
             </div>
 
             <div>
-              <Label htmlFor="salary">Expected Salary</Label>
+              <Label htmlFor="salary" className='mb-2'>Expected Salary</Label>
               <Input
                 id="salary"
                 {...register('salary')}
@@ -132,7 +135,7 @@ export default function JobForm({ onSubmit, initialData, isLoading }: JobFormPro
             </div>
 
             <div className="md:col-span-2">
-              <Label htmlFor="jobUrl">Job URL</Label>
+              <Label htmlFor="jobUrl" className='mb-2'>Job URL</Label>
               <Input
                 id="jobUrl"
                 {...register('jobUrl')}
@@ -144,7 +147,7 @@ export default function JobForm({ onSubmit, initialData, isLoading }: JobFormPro
             </div>
 
             <div>
-              <Label htmlFor="contactEmail">Contact Email</Label>
+              <Label htmlFor="contactEmail" className='mb-2'>Contact Email</Label>
               <Input
                 id="contactEmail"
                 type="email"
@@ -157,7 +160,7 @@ export default function JobForm({ onSubmit, initialData, isLoading }: JobFormPro
             </div>
 
             <div>
-              <Label htmlFor="followUpDate">Follow-up Date</Label>
+              <Label htmlFor="followUpDate" className='mb-2'>Follow-up Date</Label>
               <Input
                 id="followUpDate"
                 type="date"
@@ -166,7 +169,7 @@ export default function JobForm({ onSubmit, initialData, isLoading }: JobFormPro
             </div>
 
             <div className="md:col-span-2">
-              <Label htmlFor="notes">Notes</Label>
+              <Label htmlFor="notes" className='mb-2'>Notes</Label>
               <Textarea
                 id="notes"
                 {...register('notes')}

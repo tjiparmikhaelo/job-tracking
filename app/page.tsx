@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import JobForm from '@/app/components/JobForm';
 import JobList from '@/app/components/JobList';
 import { Button } from '@/app/components/ui/button';
-import { Plus, Briefcase } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import Image from 'next/image';
 
 interface Job {
   id: number;
@@ -28,10 +29,21 @@ export default function Home() {
   const [showForm, setShowForm] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  
+  const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchJobs();
   }, []);
+
+  useEffect(() => {
+    if (showForm && formRef.current) {
+      formRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }
+  }, [showForm]);
 
   const fetchJobs = async () => {
     try {
@@ -72,18 +84,16 @@ export default function Home() {
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm('Are you sure you want to delete this job application?')) {
-      try {
-        const response = await fetch(`/api/jobs/${id}`, {
-          method: 'DELETE',
-        });
+    try {
+      const response = await fetch(`/api/jobs/${id}`, {
+        method: 'DELETE',
+      });
 
-        if (response.ok) {
-          await fetchJobs();
-        }
-      } catch (error) {
-        console.error('Failed to delete job:', error);
+      if (response.ok) {
+        await fetchJobs();
       }
+    } catch (error) {
+      console.error('Failed to delete job:', error);
     }
   };
 
@@ -107,8 +117,14 @@ export default function Home() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <Briefcase className="w-8 h-8 text-blue-600" />
-              <h1 className="text-3xl font-bold text-gray-900">Job Application Tracker</h1>
+              <Image
+                src='/images/logo.png'
+                alt='Logo Sabam'
+                width={50}
+                height={50}
+                priority
+              ></Image>
+              <h1 className="text-2xl font-bold text-gray-900">Job Application Tracker</h1>
             </div>
             <Button
               onClick={() => {
