@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import JobForm from '@/app/components/JobForm';
 import JobList from '@/app/components/JobList';
 import { Button } from '@/app/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
 import Image from 'next/image';
 
 interface Job {
@@ -27,6 +27,7 @@ interface Job {
 export default function Home() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [buttonText, setButtonText] = useState('Add Application');
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   
@@ -38,10 +39,18 @@ export default function Home() {
 
   useEffect(() => {
     if (showForm && formRef.current) {
-      formRef.current.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
-      });
+      formRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      })
+    }
+  }, [showForm])
+
+  useEffect(() => {
+    if (showForm) {
+      setButtonText('Cancel');
+    } else {
+      setTimeout(() => setButtonText('Add Application'), 300); // Delay to match animation
     }
   }, [showForm]);
 
@@ -133,8 +142,12 @@ export default function Home() {
               }}
               className="flex items-center gap-2"
             >
-              <Plus className="w-4 h-4" />
-              {showForm ? 'Cancel' : 'Add Application'}
+              {buttonText === 'Cancel' ? (
+                <Minus className="w-4 h-4" />
+              ) : (
+                <Plus className="w-4 h-4" />
+              )}
+              {buttonText}
             </Button>
           </div>
 
@@ -164,7 +177,7 @@ export default function Home() {
         </div>
 
         {showForm && (
-          <div className="mb-8">
+            <div ref={formRef} className="mb-8">
             <JobForm
               onSubmit={handleSubmit}
               initialData={editingJob ? {
@@ -180,6 +193,7 @@ export default function Home() {
                 followUpDate: editingJob.followUpDate?.split('T')[0] || '',
               } : undefined}
               isLoading={isLoading}
+              isEditing={!!editingJob}
             />
           </div>
         )}
